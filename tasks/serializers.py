@@ -22,3 +22,12 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = '__all__'
+
+    def create(self, validated_data):
+        task = Task.objects.create(
+            title=validated_data['title'],
+            description=validated_data['description'],
+            user=validated_data['user']
+        )
+
+        return task
