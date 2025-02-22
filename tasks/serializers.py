@@ -22,12 +22,14 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = '__all__'
+        read_only_fields = ['user']  # O usuário será atribuído automaticamente
 
     def create(self, validated_data):
-        task = Task.objects.create(
-            title=validated_data['title'],
-            description=validated_data['description'],
-            user=validated_data['user']
-        )
+        request = self.context.get('request')  # Obtém o request do contexto
 
-        return task
+        if request and request.user.is_authenticated:
+            validated_data['user'] = request.user  # Associa ao usuário autenticado
+        else:
+            raise serializers.ValidationError("Usuário não autenticado")
+
+        return super().create(validated_data)
