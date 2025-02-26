@@ -6,6 +6,7 @@ from .serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated
 from .models import Task
 from .serializers import TaskSerializer
+from rest_framework.decorators import api_view, permission_classes
 
 class RegisterView(APIView):
     def post(self, request):
@@ -27,3 +28,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Task.objects.filter(user=self.request.user)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def verify_token(request):
+    return Response({"message": "Token válido"})
